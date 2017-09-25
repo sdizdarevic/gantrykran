@@ -1,0 +1,13 @@
+
+CC5X Version 3.4B, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: init_serial            :#1  : p0 <- p0 
+
+F: main                   :#0  : p0
+    init_serial           : #1  : p0 -> p0
+
+
+ L0  main
+ L1    init_serial
+

@@ -1,0 +1,380 @@
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 1
+
+ADDR CODE  LINE SOURCE
+
+           0001 
+           0002 ; CC5X Version 3.4B, Copyright (c) B Knudsen Data
+           0003 ; C compiler for the PICmicro family
+           0004 ; ************  18. May 2010  13:40  *************
+           0005 
+           0006 	processor  16F877
+           0007 	radix  DEC
+           0008 
+     0000  0009 INDF        EQU   0x00
+     0004  0010 FSR         EQU   0x04
+     0006  0011 PORTB       EQU   0x06
+     0086  0012 TRISB       EQU   0x86
+     0002  0013 Zero_       EQU   2
+     0005  0014 RP0         EQU   5
+     0006  0015 RP1         EQU   6
+     0007  0016 IRP         EQU   7
+     0000  0017 RBIF        EQU   0
+     0003  0018 RBIE        EQU   3
+     0007  0019 GIE         EQU   7
+     0007  0020 PORTC       EQU   0x07
+     0008  0021 PORTD       EQU   0x08
+     001A  0022 RCREG       EQU   0x1A
+     0087  0023 TRISC       EQU   0x87
+     0088  0024 TRISD       EQU   0x88
+     0099  0025 SPBRG       EQU   0x99
+     0006  0026 PEIE        EQU   6
+     0005  0027 RCIF        EQU   5
+     0004  0028 CREN        EQU   4
+     0007  0029 SPEN        EQU   7
+     0005  0030 RCIE        EQU   5
+     0002  0031 BRGH        EQU   2
+     0004  0032 SYNC        EQU   4
+     0021  0033 prijem      EQU   0x21
+     0022  0034 pom         EQU   0x22
+     0020  0035 k           EQU   0x20
+           0036 
+0000 2812  0037 	GOTO main
+           0038 
+           0039   ; FILE Serial_V2.c
+           0040 			;char prijem;
+           0041 			;char pom;
+           0042 			;
+           0043 			;void init_serial()
+           0044 			;{
+           0045 init_serial
+           0046 			;	TRISC.5=0;
+0001 1683  0047 	BSF   0x03,RP0
+0002 1303  0048 	BCF   0x03,RP1
+0003 1287  0049 	BCF   TRISC,5
+           0050 			;	PORTC.5=0;
+0004 1283  0051 	BCF   0x03,RP0
+0005 1287  0052 	BCF   PORTC,5
+           0053 			;	BRGH=1;  // High Baud Rate
+0006 1683  0054 	BSF   0x03,RP0
+0007 1518  0055 	BSF   0x98,BRGH
+           0056 			;	
+           0057 			;	SPBRG=50; // Za 9600 na Fosc=8MHz
+0008 3032  0058 	MOVLW 50
+0009 0099  0059 	MOVWF SPBRG
+           0060 			;	SYNC=0;	// Asinhrona komunikacija
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 2
+
+ADDR CODE  LINE SOURCE
+
+000A 1218  0061 	BCF   0x98,SYNC
+           0062 			;	SPEN=1;	// Aktiviranje serijskog porta
+000B 1283  0063 	BCF   0x03,RP0
+000C 1798  0064 	BSF   0x18,SPEN
+           0065 			;	RCIE=1; // Onemogucavanje interrupta na serijskom portu
+000D 1683  0066 	BSF   0x03,RP0
+000E 168C  0067 	BSF   0x8C,RCIE
+           0068 			;	CREN=0; // Ukljucivanje/iskljucivanje prijemnika
+000F 1283  0069 	BCF   0x03,RP0
+0010 1218  0070 	BCF   0x18,CREN
+           0071 			;}
+0011 0008  0072 	RETURN
+           0073 			;
+           0074 			;void main(){
+           0075 main
+           0076 			;
+           0077 			;	char k;
+           0078 			;	clearRAM();
+0012 1383  0079 	BCF   0x03,IRP
+0013 3020  0080 	MOVLW 32
+0014 0084  0081 m001	MOVWF FSR
+0015 0180  0082 m002	CLRF  INDF
+0016 1784  0083 	BSF   FSR,7
+0017 0180  0084 	CLRF  INDF
+0018 1384  0085 	BCF   FSR,7
+0019 0A84  0086 	INCF  FSR,1
+001A 1F84  0087 	BTFSS FSR,7
+001B 2815  0088 	GOTO  m002
+001C 1B83  0089 	BTFSC 0x03,IRP
+001D 2821  0090 	GOTO  m003
+001E 1783  0091 	BSF   0x03,IRP
+001F 3010  0092 	MOVLW 16
+0020 2814  0093 	GOTO  m001
+           0094 			;	TRISD=0;	
+0021 1683  0095 m003	BSF   0x03,RP0
+0022 1303  0096 	BCF   0x03,RP1
+0023 0188  0097 	CLRF  TRISD
+           0098 			;	PORTD=0;
+0024 1283  0099 	BCF   0x03,RP0
+0025 0188  0100 	CLRF  PORTD
+           0101 			;	init_serial();
+0026 2001  0102 	CALL  init_serial
+           0103 			;
+           0104 			;	PEIE=0;
+0027 130B  0105 	BCF   0x0B,PEIE
+           0106 			;	GIE=1;
+0028 178B  0107 	BSF   0x0B,GIE
+           0108 			;
+           0109 			;	k=0;
+0029 1283  0110 	BCF   0x03,RP0
+002A 1303  0111 	BCF   0x03,RP1
+002B 01A0  0112 	CLRF  k
+           0113 			;
+           0114 			;	CREN=1;
+002C 1618  0115 	BSF   0x18,CREN
+           0116 			;	
+           0117 			;	TRISB=255;
+002D 30FF  0118 	MOVLW 255
+002E 1683  0119 	BSF   0x03,RP0
+002F 0086  0120 	MOVWF TRISB
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 3
+
+ADDR CODE  LINE SOURCE
+
+           0121 			;	RBIE=1;
+0030 158B  0122 	BSF   0x0B,RBIE
+           0123 			;	pom=0;
+0031 1283  0124 	BCF   0x03,RP0
+0032 01A2  0125 	CLRF  pom
+           0126 			;
+           0127 			;	while(RCIF) prijem=RCREG;
+0033 1283  0128 m004	BCF   0x03,RP0
+0034 1303  0129 	BCF   0x03,RP1
+0035 1E8C  0130 	BTFSS 0x0C,RCIF
+0036 283A  0131 	GOTO  m005
+0037 081A  0132 	MOVF  RCREG,W
+0038 00A1  0133 	MOVWF prijem
+0039 2833  0134 	GOTO  m004
+           0135 			;
+           0136 			;		while(1){
+           0137 			;		//	if(OERR){
+           0138 			;		//		CREN=0;
+           0139 			;		//		CREN=1;
+           0140 			;		//			}
+           0141 			;			
+           0142 			;			if(RCIF){
+003A 1283  0143 m005	BCF   0x03,RP0
+003B 1303  0144 	BCF   0x03,RP1
+003C 1E8C  0145 	BTFSS 0x0C,RCIF
+003D 28AA  0146 	GOTO  m018
+           0147 			;
+           0148 			;					while(RCIF){
+003E 1283  0149 m006	BCF   0x03,RP0
+003F 1303  0150 	BCF   0x03,RP1
+0040 1E8C  0151 	BTFSS 0x0C,RCIF
+0041 2845  0152 	GOTO  m007
+           0153 			;
+           0154 			;						prijem=RCREG;
+0042 081A  0155 	MOVF  RCREG,W
+0043 00A1  0156 	MOVWF prijem
+           0157 			;
+           0158 			;								}
+0044 283E  0159 	GOTO  m006
+           0160 			;					if(prijem=='#'){
+0045 1283  0161 m007	BCF   0x03,RP0
+0046 1303  0162 	BCF   0x03,RP1
+0047 0821  0163 	MOVF  prijem,W
+0048 3A23  0164 	XORLW 35
+0049 1D03  0165 	BTFSS 0x03,Zero_
+004A 28AA  0166 	GOTO  m018
+           0167 			;
+           0168 			;							while(RCIF!=1);
+004B 1283  0169 m008	BCF   0x03,RP0
+004C 1303  0170 	BCF   0x03,RP1
+004D 1E8C  0171 	BTFSS 0x0C,RCIF
+004E 284B  0172 	GOTO  m008
+           0173 			;								
+           0174 			;							prijem=RCREG;
+004F 1283  0175 	BCF   0x03,RP0
+0050 1303  0176 	BCF   0x03,RP1
+0051 081A  0177 	MOVF  RCREG,W
+0052 00A1  0178 	MOVWF prijem
+           0179 			;		
+           0180 			;								if(prijem=='D'){
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 4
+
+ADDR CODE  LINE SOURCE
+
+0053 0821  0181 	MOVF  prijem,W
+0054 3A44  0182 	XORLW 68
+0055 1D03  0183 	BTFSS 0x03,Zero_
+0056 28AA  0184 	GOTO  m018
+           0185 			;
+           0186 			;										while(RCIF!=1);
+0057 1283  0187 m009	BCF   0x03,RP0
+0058 1303  0188 	BCF   0x03,RP1
+0059 1E8C  0189 	BTFSS 0x0C,RCIF
+005A 2857  0190 	GOTO  m009
+           0191 			;
+           0192 			;										prijem=RCREG;
+005B 1283  0193 	BCF   0x03,RP0
+005C 1303  0194 	BCF   0x03,RP1
+005D 081A  0195 	MOVF  RCREG,W
+005E 00A1  0196 	MOVWF prijem
+           0197 			;
+           0198 			;										   	if(prijem==0){
+005F 08A1  0199 	MOVF  prijem,1
+0060 1D03  0200 	BTFSS 0x03,Zero_
+0061 2865  0201 	GOTO  m010
+           0202 			;											PORTD=prijem;
+0062 0821  0203 	MOVF  prijem,W
+0063 0088  0204 	MOVWF PORTD
+           0205 			;															}
+           0206 			;											else if(prijem==1){	 						
+                   										
+0064 28AA  0207 	GOTO  m018
+0065 1283  0208 m010	BCF   0x03,RP0
+0066 1303  0209 	BCF   0x03,RP1
+0067 0B21  0210 	DECFSZ prijem,W
+0068 286C  0211 	GOTO  m011
+           0212 			;											PORTD=prijem;
+0069 0821  0213 	MOVF  prijem,W
+006A 0088  0214 	MOVWF PORTD
+           0215 			;															}
+           0216 			;											else if(prijem==2){	 						
+                   										
+006B 28AA  0217 	GOTO  m018
+006C 1283  0218 m011	BCF   0x03,RP0
+006D 1303  0219 	BCF   0x03,RP1
+006E 0821  0220 	MOVF  prijem,W
+006F 3A02  0221 	XORLW 2
+0070 1D03  0222 	BTFSS 0x03,Zero_
+0071 2875  0223 	GOTO  m012
+           0224 			;											PORTD=prijem;						
+0072 0821  0225 	MOVF  prijem,W
+0073 0088  0226 	MOVWF PORTD
+           0227 			;															}
+           0228 			;											else if(prijem==4){	 						
+                   										
+0074 28AA  0229 	GOTO  m018
+0075 1283  0230 m012	BCF   0x03,RP0
+0076 1303  0231 	BCF   0x03,RP1
+0077 0821  0232 	MOVF  prijem,W
+0078 3A04  0233 	XORLW 4
+0079 1D03  0234 	BTFSS 0x03,Zero_
+007A 287E  0235 	GOTO  m013
+           0236 			;											PORTD=prijem;
+007B 0821  0237 	MOVF  prijem,W
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 5
+
+ADDR CODE  LINE SOURCE
+
+007C 0088  0238 	MOVWF PORTD
+           0239 			;															}
+           0240 			;											else if(prijem==8){	 						
+                   										
+007D 28AA  0241 	GOTO  m018
+007E 1283  0242 m013	BCF   0x03,RP0
+007F 1303  0243 	BCF   0x03,RP1
+0080 0821  0244 	MOVF  prijem,W
+0081 3A08  0245 	XORLW 8
+0082 1D03  0246 	BTFSS 0x03,Zero_
+0083 2887  0247 	GOTO  m014
+           0248 			;											PORTD=prijem;
+0084 0821  0249 	MOVF  prijem,W
+0085 0088  0250 	MOVWF PORTD
+           0251 			;															}
+           0252 			;											else if(prijem==16){	 						
+                   										
+0086 28AA  0253 	GOTO  m018
+0087 1283  0254 m014	BCF   0x03,RP0
+0088 1303  0255 	BCF   0x03,RP1
+0089 0821  0256 	MOVF  prijem,W
+008A 3A10  0257 	XORLW 16
+008B 1D03  0258 	BTFSS 0x03,Zero_
+008C 2890  0259 	GOTO  m015
+           0260 			;											PORTD=prijem;
+008D 0821  0261 	MOVF  prijem,W
+008E 0088  0262 	MOVWF PORTD
+           0263 			;															}
+           0264 			;											else if(prijem==32){	 						
+                   										
+008F 28AA  0265 	GOTO  m018
+0090 1283  0266 m015	BCF   0x03,RP0
+0091 1303  0267 	BCF   0x03,RP1
+0092 0821  0268 	MOVF  prijem,W
+0093 3A20  0269 	XORLW 32
+0094 1D03  0270 	BTFSS 0x03,Zero_
+0095 2899  0271 	GOTO  m016
+           0272 			;											PORTD=prijem;
+0096 0821  0273 	MOVF  prijem,W
+0097 0088  0274 	MOVWF PORTD
+           0275 			;															}
+           0276 			;											else if(prijem==64){	 						
+                   										
+0098 28AA  0277 	GOTO  m018
+0099 1283  0278 m016	BCF   0x03,RP0
+009A 1303  0279 	BCF   0x03,RP1
+009B 0821  0280 	MOVF  prijem,W
+009C 3A40  0281 	XORLW 64
+009D 1D03  0282 	BTFSS 0x03,Zero_
+009E 28A2  0283 	GOTO  m017
+           0284 			;											PORTD=prijem;
+009F 0821  0285 	MOVF  prijem,W
+00A0 0088  0286 	MOVWF PORTD
+           0287 			;															}					
+                   
+           0288 			;											else if(prijem==128){	 						
+                   										
+00A1 28AA  0289 	GOTO  m018
+00A2 1283  0290 m017	BCF   0x03,RP0
+00A3 1303  0291 	BCF   0x03,RP1
+CC5X Version 3.4B,   File: Serial_V2.c         18. May 2010  13:40   Page 6
+
+ADDR CODE  LINE SOURCE
+
+00A4 0821  0292 	MOVF  prijem,W
+00A5 3A80  0293 	XORLW 128
+00A6 1D03  0294 	BTFSS 0x03,Zero_
+00A7 28AA  0295 	GOTO  m018
+           0296 			;											PORTD=prijem;
+00A8 0821  0297 	MOVF  prijem,W
+00A9 0088  0298 	MOVWF PORTD
+           0299 			;															}		
+           0300 			;												}
+           0301 			;											}
+           0302 			;									}
+           0303 			;	
+           0304 			;		
+           0305 			;
+           0306 			;		if(RBIF){
+00AA 1C0B  0307 m018	BTFSS 0x0B,RBIF
+00AB 28B2  0308 	GOTO  m019
+           0309 			;
+           0310 			;			PORTD=0;
+00AC 1283  0311 	BCF   0x03,RP0
+00AD 1303  0312 	BCF   0x03,RP1
+00AE 0188  0313 	CLRF  PORTD
+           0314 			;			pom=PORTB;
+00AF 0806  0315 	MOVF  PORTB,W
+00B0 00A2  0316 	MOVWF pom
+           0317 			;			RBIF=0;	
+00B1 100B  0318 	BCF   0x0B,RBIF
+           0319 			;			
+           0320 			;		}
+           0321 			;	CREN=1;
+00B2 1283  0322 m019	BCF   0x03,RP0
+00B3 1303  0323 	BCF   0x03,RP1
+00B4 1618  0324 	BSF   0x18,CREN
+           0325 			;		
+           0326 			;		
+           0327 			;		
+           0328 			;
+           0329 			;
+           0330 			;	}
+00B5 283A  0331 	GOTO  m005
+           0332 
+           0333 	END
+           0334 
+           0335 
+           0336 ; *** KEY INFO ***
+           0337 
+           0338 ; 0x0001 P0   17 word(s)  0 % : init_serial
+           0339 ; 0x0012 P0  164 word(s)  8 % : main
+           0340 
+           0341 ; RAM usage: 3 bytes (1 local), 365 bytes free
+           0342 ; Maximum call level: 1
+           0343 ;  Codepage 0 has  182 word(s) :   8 %
+           0344 ;  Codepage 1 has    0 word(s) :   0 %
+           0345 ;  Codepage 2 has    0 word(s) :   0 %
+           0346 ;  Codepage 3 has    0 word(s) :   0 %
+           0347 ; Total of 182 code words (2 %)

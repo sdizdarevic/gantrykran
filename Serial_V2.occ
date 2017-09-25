@@ -1,0 +1,28 @@
+CC5X Version 3.4B, Copyright (c) B Knudsen Data, Norway 1992-2009
+ --> FREE edition, 8-16 bit int, 24 bit float, 32k code, reduced optim.
+Serial_V2.c:
+ 18. May 2010  13:40
+ Chip = 16F877
+ RAM : -------- -------- -------- -------- =..***** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: -------- -------- -------- -------- ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** -------- --------
+ 100h: -------- -------- ******** ******** ******** ******** ******** ********
+ 140h: ******** ******** ******** ******** ******** ******** -------- --------
+ 180h: -------- -------- ******** ******** ******** ******** ******** ********
+ 1C0h: ******** ******** ******** ******** ******** ******** -------- --------
+RAM usage: 3 bytes (1 local), 365 bytes free
+ File 'Serial_V2.fcs'
+ Optimizing - removed 3 instructions (-1 %)
+ File 'Serial_V2.var'
+ File 'Serial_V2.asm'
+ File 'Serial_V2.lst'
+ File 'Serial_V2.cod'
+ File 'Serial_V2.occ'
+ File 'Serial_V2.hex'
+ Codepage 0 has  182 word(s) :   8 %
+ Codepage 1 has    0 word(s) :   0 %
+ Codepage 2 has    0 word(s) :   0 %
+ Codepage 3 has    0 word(s) :   0 %
+Total of 182 code words (2 %)
+ * Estimated CODE SIZE of full optimization: 142 code words (-21 %)
